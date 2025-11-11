@@ -1,0 +1,96 @@
+* {
+  font-family: Arial, Helvetica, sans-serif;
+}
+body {
+  background-color: #f0f0f0;
+}
+nav {
+  background-color: #f0f0f0;
+  padding: 10px;
+  text-align: center;
+  color: #f0f0f0;
+}
+footer {
+  background-color: #f0f0f0;
+  padding: 10px;
+  text-align: center;
+  color: #f0f0f0;
+}
+.form-container {
+  width: 300px;
+  margin: 100px auto;
+  padding: 20px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  background-color: white;
+}
+.title-card {
+  font-family: "Lucida Sans", "Lucida Sans Regular", "Lucida Grande",
+    "Lucida Sans Unicode", Geneva, Verdana, sans-serif;
+  text-align: center;
+  margin-bottom: 20px;
+}
+.text-box {
+  width: 100%;
+  padding: 10px;
+  margin: 10px 0;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  box-sizing: border-box;
+  color: black;
+  background-color: white;
+}
+.button-card {
+  display: flex;
+  justify-content: space-evenly;
+  width: 100%;
+  padding: 10px;
+  margin: 10px 0;
+  border: none;
+  border-radius: 5px;
+  color: white;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.button-enviar {
+  color: white;
+  width: 100px;
+  padding: 10px;
+  margin: 10px 0;
+  border: solid black 1px;
+  border-radius: 5px;
+  font-size: 16px;
+  cursor: pointer;
+  text-decoration: none;
+  text-align: center;
+  background-color: black;
+}
+.button-enviar:hover {
+  background-color: white;
+  color: black;
+  text-decoration: none;
+}
+
+.button-voltar {
+  background-color: #fff;
+  color: black;
+  width: 100px;
+  padding: 10px;
+  margin: 10px 0;
+  border: solid black 1px;
+  border-radius: 5px;
+  font-size: 16px;
+  cursor: pointer;
+  text-decoration: none;
+  text-align: center;
+}
+.button-voltar:hover {
+  background-color: #000;
+  color: white;
+  text-decoration: none;
+}
+.button-usuario {
+  display: none;
+}
