@@ -13,11 +13,8 @@ class Proprietario
 {
 
 
-    private ITemplate $template;
-    public function __construct()
-    {
-        $this->template = new UsuarioTemp();
-    }
+
+    public function __construct() {}
     public function listarid()
     {
         $id = $_GET['id'];
@@ -28,59 +25,57 @@ class Proprietario
     }
     public function inserir()
     {
-        
+
         $id = $_SESSION['usuario_logado_id'] ?? null;
-    
-    
-    
-    
-    $nome = $_POST["proprietario"];
-    $email = $_POST["email"];
-    $telefone = $_POST["telefone"];
-    $cpf = $_POST["cpf"];
-    $endereco = $_POST["endereço_cobrança"];
-    
-    
-    $service = new ProprietarioService();
-    $resultado = $service->inserir($nome, $id, $email, $telefone, $cpf, $endereco);
-    
+
+
+
+
+        $nome = $_POST["proprietario"];
+        $email = $_POST["email"];
+        $telefone = $_POST["telefone"];
+        $cpf = $_POST["cpf"];
+        $endereco = $_POST["endereço_cobrança"];
+
+
+        $service = new ProprietarioService();
+        $resultado = $service->inserir($nome, $id, $email, $telefone, $cpf, $endereco);
+
         $service = new UsuarioService();
         $id = $_SESSION['usuario_logado_id'];
         header("location: /projeto/proprietario/voltar");
-        
-    
-    exit();
-        
+
+
+        exit();
     }
     public function formulario()
     {
 
         $this->template->layout("\\public\\proprietario\\formproprietario.php");
     }
-    
+
 
     public function apagar()
-    {  
-        
-    $id = $_GET['id'];
-    $service = new ProprietarioService();
-    $resultado = $service->apagar($id);
-    $service = new UsuarioService();
+    {
+
+        $id = $_GET['id'];
+        $service = new ProprietarioService();
+        $resultado = $service->apagar($id);
+        $service = new UsuarioService();
         $id = $_SESSION['usuario_logado_id'];
         $resultado = $service->listarPro($id);
 
-       $this->template->layout("\\public\\proprietario\\listarpro.php", $resultado);
-    
-    exit();
-        
+        $this->template->layout("\\public\\proprietario\\listarpro.php", $resultado);
+
+        exit();
     }
-    public function alterarForm() {
+    public function alterarForm()
+    {
         $id = $_GET['id'];
         $service = new ProprietarioService();
         $resultado = $service->listarId($id);
 
         $this->template->layout("\\public\\proprietario\\formalterar.php", $resultado);
-        
     }
     public function alterar()
     {
@@ -90,7 +85,7 @@ class Proprietario
         $email = $_POST["email"];
         $telefone = $_POST["numero_telefone"];
         $cpf = $_POST["CPF_CNPJ"];
-       
+
         $endereco = $_POST["endereço_cobrança"];
         $service = new ProprietarioService();
         $resultado = $service->alterar($id, $nome, $email, $telefone, $cpf, $endereco);
@@ -99,14 +94,15 @@ class Proprietario
         $id = $_SESSION['usuario_logado_id'];
         $resultado = $service->listarPro($id);
 
-       $this->template->layout("\\public\\proprietario\\listarpro.php", $resultado);
+        $this->template->layout("\\public\\proprietario\\listarpro.php", $resultado);
     }
 
-    public function voltar(){
+    public function voltar()
+    {
         $service = new UsuarioService();
         $id = $_SESSION['usuario_logado_id'];
         $resultado = $service->listarPro($id);
 
-       $this->template->layout("\\public\\proprietario\\listarpro.php", $resultado);
+        $this->template->layout("\\public\\proprietario\\listarpro.php", $resultado);
     }
 }
