@@ -8,123 +8,119 @@ use template\ITemplate;
 
 class Usuario
 {
-    private ITemplate $template;
-    public function __construct()
-    {
-        $this->template = new UsuarioTemp();
-    }
+
+    public function __construct() {}
 
     public function listar()
     {
 
         $service = new UsuarioService();
-        $resultado = $service->listarUsuario();
-        $this->template->layout("\\public\\usuario\\listar.php", $resultado);
+        return $resultado = $service->listarUsuario();
     }
     public function listarid()
     {
-        $id = $_GET['id'];
+        $id = $_SESSION['usuario_logado_id'];
         $service = new UsuarioService();
         $resultado = $service->listarId($id);
     }
 
-    public function inserir()
+    public function inserir($nome, $email, $telefone, $cpf, $senha, $endereco)
     {
-        $nome = $_POST["nome"];
-        $email = $_POST["email"];
-        $telefone = $_POST["telefone"];
-        $cpf = $_POST["cpf"];
-        $senha = $_POST["senha"];
+        $json_data = file_get_contents('php://input');
+        $data = json_decode($json_data, true);
+
+        $nome = $data["nome"] ?? null;
+        $email = $data["email"] ?? null;
+        $telefone = $data["telefone"] ?? null;
+        $cpf = $data["cpf"] ?? null;
+        $senha = $data["senha"] ?? null;
+        $endereco = $data["endereco"] ?? null;
+
+
         $senha_hash = password_hash($senha, PASSWORD_DEFAULT);
-        $endereco = $_POST["endereço_cobrança"];
         $service = new UsuarioService();
         $resultado = $service->inserir($nome, $email, $telefone, $cpf, $senha_hash, $endereco);
-        $this->template->layout("\\public\\usuario\\login.php");
-    }
-    public function formulario()
-    {
 
-        $this->template->layout("\\public\\usuario\\form.php");
+        return ["message" => "Inserçao bem-sucedida."];
     }
-    public function alterarForm()
+    public function logado()
     {
+        $json_data = file_get_contents('php://input');
+        $data = json_decode($json_data, true);
 
-        
+        $senha = $data["senha"] ?? null;
+        $email = $data["email"] ?? null;
+
         $service = new UsuarioService();
-        $resultado = $service->listarId($_SESSION['usuario_logado_id']);
+        $resultado = $service->logar($email);
 
-        $this->template->layout("\\public\\usuario\\formalterar.php", $resultado);
+        if ($resultado && isset($resultado[0]) && password_verify($senha, $resultado[0]['senha'])) {
+
+            $_SESSION['usuario_logado_id'] = $resultado[0]['usuario_id'];
+            $_SESSION['usuario_logado_nome'] = $resultado[0]['nome'];
+
+
+            $token = $this->autenticar($_SESSION['usuario_logado_id'], $_SESSION['usuario_logado_nome']);
+            return [
+                "message" => "Login bem-sucedido.",
+                "token" => $token,
+                "usuario" => [
+                    "id" => $_SESSION['usuario_logado_id'],
+                    "nome" => $_SESSION['usuario_logado_nome']
+                ]
+            ];
+        } else {
+            session_unset();
+            session_destroy();
+            http_response_code(401);
+            return ["erro" => "Credenciais inválidas."];
+            exit;
+        }
     }
+
+
+
+
     public function alterar()
     {
 
-        $id = $_POST["usuario_id"];
-        $nome = $_POST["nome"];
-        $email = $_POST["email"];
-        $telefone = $_POST["numero_telefone"];
-        $cpf = $_POST["CPF_CNPJ"];
-        $senha = $_POST["senha"];
+        $json_data = file_get_contents('php://input');
+        $data = json_decode($json_data, true);
+
+        $nome = $data["nome"] ?? null;
+        $email = $data["email"] ?? null;
+        $telefone = $data["telefone"] ?? null;
+        $cpf = $data["cpf"] ?? null;
+        $senha = $data["senha"] ?? null;
+        $endereco = $data["endereco"] ?? null;
+
+        $id =  $_SESSION['usuario_logado_id'];
+
+
+
+
         $senha_hash = password_hash($senha, PASSWORD_DEFAULT);
-        $endereco = $_POST["endereço_cobrança"];
+
         $service = new UsuarioService();
         $resultado = $service->alterar($id, $nome, $email, $telefone, $cpf, $senha_hash, $endereco);
-        header("location: /projeto/usuario/menu");
+        return ["message" => "alteração bem-sucedida."];
     }
     public function apagar()
     {
-        
+
         $service = new UsuarioService();
         $resultado = $service->apagar($_SESSION['usuario_logado_id']);
-        header("Location: /projeto/usuario/logout");
-        
+        return ["message" => "apagado com sucesso."];
     }
-    public function listarPro()
-    {
-        $id = $_GET['id'];
-        $service = new UsuarioService();
-        $resultado = $service->listarPro($id);
 
-       $this->template->layout("\\public\\proprietario\\listarpro.php", $resultado);
-        
-    }
-     public function login()
+    public function autenticar()
     {
-        $this->template->layout("\\public\\usuario\\login.php");
-        
-    }
-     public function logado()
-    {
-        $senha = $_POST["senha"];        
-        $email = $_POST["email"];
-        
         $service = new UsuarioService();
-        $resultado = $service->logar($email);
-        
-        if ($resultado && isset($resultado[0]) && password_verify($senha, $resultado[0]['senha'])) {
-            
-            $_SESSION['usuario_logado_id'] = $resultado[0]['usuario_id'];
-            $_SESSION['usuario_logado_nome'] = $resultado[0]['nome'];
-            $id = $resultado[0]['usuario_id'];
-            $resultado = $service->listarPro($id);
-            $this->template->layout("\\public\\proprietario\\listarpro.php", $resultado);
-        }else{
-            session_unset();   
-            session_destroy(); header("Location: /projeto/");
-            exit;
-        }
-        
+        return $service->autenticar($_SESSION['usuario_logado_id'], $_SESSION['usuario_logado_nome']);
     }
-    public function logout()
+    public function login()
     {
-         
-        session_unset();   
-        session_destroy(); header("Location: /projeto/");
-        exit;
-        
-    }
-    public function menu(){
-        $service = new UsuarioService();
-        $resultado = $service->listarId($_SESSION['usuario_logado_id']);
-        $this->template->layout("\\public\\usuario\\menu.php",$resultado);
+        $template = new UsuarioTemp();
+        $template->layout("\\public\\usuario\\login.php");
     }
 }

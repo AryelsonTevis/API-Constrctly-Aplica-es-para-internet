@@ -13,7 +13,7 @@ class Proprietario
 {
 
 
-
+    private ITemplate $template;
     public function __construct() {}
     public function listarid()
     {

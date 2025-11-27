@@ -9,13 +9,16 @@ class Rotas
     public function __construct()
     {
         $this->endpoints = [
-            "proprietario" => new Acao([
-                Acao::POST => new Endpoint("Proprietario", "inserir"),
-                Acao::GET => new Endpoint("Proprietario", "listar")
+            "usuario" => new Acao([
+                Acao::GET => new Endpoint("Usuario", "listar"),
+                Acao::POST => new Endpoint("Usuario", "inserir"),
+                Acao::PUT => new Endpoint("Usuario", "alterar", true),
+                Acao::DELETE => new Endpoint("Usuario", "apagar", true)
+
             ]),
-            "casa" => new Acao([
-                Acao::POST => new Endpoint("Casa", "inserir"),
-                Acao::GET => new Endpoint("Casa", "listar")
+            "logar" => new Acao([
+
+                Acao::POST => new Endpoint("Usuario", "logado")
             ])
         ];
     }

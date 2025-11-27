@@ -2,6 +2,7 @@
 
 namespace generic;
 
+use JWTAuth;
 use ReflectionMethod;
 
 class Acao
@@ -25,7 +26,16 @@ class Acao
         $end = $this->endpointMetodo();
 
         if ($end) {
-            $reflectMetodo = new ReflectionMethod($end->classe, $end->exeucao);
+            if ($end->autenticar) {
+                $jwt = new JWTAuth();
+                $decode = $jwt->verificar();
+                if (!$decode) {
+                    error_log("Falha na verificação JWT. Retornando 402. \$decode é: " . var_export($decode, true));
+                    http_response_code(401);
+                    return;
+                }
+            }
+            $reflectMetodo = new ReflectionMethod($end->classe, $end->execucao);
             $parametros = $reflectMetodo->getParameters();
             $returnParam = $this->getParam();
             if ($parametros) {
@@ -46,7 +56,7 @@ class Acao
     }
     private function endpointMetodo()
     {
-        return isset($this->endpoint[$_SERVER["REQUEEST_METHOD"]]) ? $this->endpoint[$_SERVER["REQUEEST_METHOD"]] : null;
+        return isset($this->endpoint[$_SERVER["REQUEST_METHOD"]]) ? $this->endpoint[$_SERVER["REQUEST_METHOD"]] : null;
     }
     private function getPost()
     {
